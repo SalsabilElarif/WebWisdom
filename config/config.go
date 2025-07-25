@@ -12,3 +12,4 @@ func LoadEnv() {
 		log.Println("No .env file found")
 	}
 }
+

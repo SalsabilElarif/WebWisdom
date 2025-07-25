@@ -36,5 +36,11 @@ func ConnectDB() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	fmt.Println("Successfully connected to PostgreSQL")
+	// Migrate models to form tables in database
+	err = DB.AutoMigrate(&Advice{})
+	if err != nil {
+		log.Fatalf("failed to migrate models: %v", err)
+	}
+
+	fmt.Println(" connected to database successfully")
 }
