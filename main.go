@@ -23,20 +23,27 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// For now, printing the advice on the server console
-	fmt.Printf("Received advice: %+v\n", advice)
+	result := database.DB.Create(&advice)
+	if result.Error != nil {
+		http.Error(w, "failed to save advice", http.StatusInternalServerError)
+		return
+	}
 
-	// Respond to client
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(`{"message":"Advice received, thank you!"}`))
+		// Respond to client
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{"message":"Advice received, thank you!"}`))
+	
 }
+
+
+
 
 func main() {
 	// Load up variables
 	config.LoadEnv()
 
 	// Connect to database
-	database.ConnectDB() 
+	database.ConnectDB()
 
 	// Handle requests to the root URL "/"
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
