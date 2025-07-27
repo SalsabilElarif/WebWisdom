@@ -35,7 +35,17 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 	
 }
 
+func getAllAdviceHandler(w http.ResponseWriter, r *http.Request) {
+	var adviceList []database.Advice
+	result := database.DB.Find(&adviceList)
+	if result.Error != nil {
+		http.Error(w, "failed to retrieve advice", http.StatusInternalServerError)
+		return
+	}
 
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(adviceList)
+}
 
 
 func main() {
@@ -51,6 +61,7 @@ func main() {
 	})
 
 	http.HandleFunc("/submit", submitHandler)
+	http.HandleFunc("/advice", getAllAdviceHandler)
 
 	fmt.Println("Server running on http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
