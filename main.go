@@ -23,13 +23,18 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if advice.Message == "" || advice.Name == "" || advice.Relation == "" {
+		http.Error(w, "All fields (message, name, relation) are required", http.StatusBadRequest)
+		return
+	}
+
 	result := database.DB.Create(&advice)
 	if result.Error != nil {
 		http.Error(w, "failed to save advice", http.StatusInternalServerError)
 		return
 	}
 
-		// Respond to client
+		
 		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte(`{"message":"Advice received, thank you!"}`))
 	
@@ -37,7 +42,7 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 
 func getAllAdviceHandler(w http.ResponseWriter, r *http.Request) {
 	var adviceList []database.Advice
-	result := database.DB.Find(&adviceList)
+	result := database.DB.Order("id DESC").Find(&adviceList)
 	if result.Error != nil {
 		http.Error(w, "failed to retrieve advice", http.StatusInternalServerError)
 		return
